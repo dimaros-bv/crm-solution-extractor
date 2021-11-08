@@ -3,7 +3,7 @@
     "id": "b2b8249c-7fdd-43ed-b902-736b8ac572ba",
     "name": "D365SolutionExtractor",
     "friendlyName": "D365 Solution Extractor (with PR)",
-    "description": "This step extracts a solution and create a PR.",
+    "description": "This task extracts a solution and create a PR.",
     "helpMarkDown": "",
     "category": "Utility",
     "author": "Dimaros B.V.",

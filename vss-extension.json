@@ -29,10 +29,6 @@
             "path": "LICENSE.md"
         }
     },
-    "repository": {
-        "type": "git",
-        "uri": "https://dev.azure.com/dimaros/Dimaros/_git/Dimaros.CRM.SolutionExtracter"
-    },
     "scopes":[
         "vso.code_write"
     ],
