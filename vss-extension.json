@@ -1,0 +1,51 @@
+{
+    "manifestVersion": 1,
+    "id": "d365-solution-extractor",
+    "version": "0.1.0",
+    "name": "D365 Solution Extractor",
+    "publisher": "dimaros",
+    "public": false,
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "icons":{
+        "default": "images/dimaros-logo.png"
+    },
+    "files":[
+        {
+            "path": "solutionExtractor"
+        }
+    ],
+    "content": {
+        "details": {
+            "path": "README.md"
+        },
+        "license": {
+            "path": "LICENSE.md"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://dev.azure.com/dimaros/Dimaros/_git/Dimaros.CRM.SolutionExtracter"
+    },
+    "scopes":[
+    ],
+    "contributions": [
+        {
+            "id": "custom-build-release-task",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "solutionExtractor"
+            }
+
+        }
+    ]
+}

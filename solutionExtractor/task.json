@@ -1,0 +1,99 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "b2b8249c-7fdd-43ed-b902-736b8ac572ba",
+    "name": "D365SolutionExtractor",
+    "friendlyName": "D365 Solution Extractor (with PR)",
+    "description": "This step extracts a solution and create a PR.",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "author": "Dimaros B.V.",
+    "version": {
+        "Major": 0,
+        "Minor": 1,
+        "Patch": 0
+    },
+    "instanceNameFormat": "Extract D365 Solution",
+    "inputs": [
+        {
+            "name": "repositoryUrl",
+            "type": "string",
+            "label": "Repository Url",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Repository url to create PR in."
+        },
+        {
+            "name": "gitEmail",
+            "type": "string",
+            "label": "Git Email",
+            "defaultValue": "pipelines@dimaros.nl",
+            "required": false,
+            "helpMarkDown": "Email to be used for a commit."
+        },
+        {
+            "name": "gitName",
+            "type": "string",
+            "label": "Git Name",
+            "defaultValue": "Azure Pipelines",
+            "required": false,
+            "helpMarkDown": "Name to be used for a commit."
+        },
+        {
+            "name": "mainBranchName",
+            "type": "string",
+            "label": "Main branch",
+            "defaultValue": "main",
+            "required": true,
+            "helpMarkDown": "Branch name to create a PR against."
+        },
+        {
+            "name": "branchName",
+            "type": "string",
+            "label": "Branch Name",
+            "defaultValue": "solution-extract-$(Build.BuildNumber)",
+            "required": true,
+            "helpMarkDown": "Branch name to create a PR from."
+        },
+        {
+            "name": "connectionString",
+            "type": "string",
+            "label": "CRM connection string",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "CRM connection string to be used."
+        },
+        {
+            "name": "solutionName",
+            "type": "string",
+            "label": "Solution",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Solution Name."
+        },
+        {
+            "name": "solutionFolder",
+            "type": "string",
+            "label": "Extract Folder",
+            "defaultValue": "Temp",
+            "required": false,
+            "helpMarkDown": "Folder name to extract solutions to."
+        },
+        {
+            "name": "unpackFolder",
+            "type": "string",
+            "label": "Unpack Folder",
+            "defaultValue": "Solution",
+            "required": false,
+            "helpMarkDown": "Folder with in the repository to unpack solution to."
+        }
+    ],
+    "execution": {
+        "PowerShell3": {
+            "target": "powershell.ps1",
+            "platforms": [
+                "windows"
+            ],
+            "workingDirectory": "$(currentDirectory)"
+        }
+    }
+}
