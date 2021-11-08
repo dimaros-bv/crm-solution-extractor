@@ -1,0 +1,65 @@
+name: '1.0$(Rev:.r)'
+
+trigger:
+- main
+
+stages:
+- stage: 'Build'
+  displayName: 'Build'
+  jobs:
+  - job: Build
+    displayName: "Build"
+    pool:
+      name: Azure Pipelines
+      vmImage: "windows-2019"
+    
+    steps:
+      - task: TfxInstaller@3
+        inputs:
+          version: 'v0.9.x'
+      - task: PackageAzureDevOpsExtension@3
+        inputs:
+          rootFolder: '$(Build.SourcesDirectory)'
+          outputPath: '$(Build.ArtifactStagingDirectory)'
+          publisherId: 'dimaros'
+          updateTasksVersion: true
+          extensionVisibility: 'private'
+          extensionPricing: 'free'
+          extensionVersion: '$(Build.BuildNumber)'
+        
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'vsix'
+        condition: succeededOrFailed()
+      
+- stage: Publish
+  displayName: 'Publish to Marketplace'
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  dependsOn: 'Build'
+  jobs:
+  - job: Publish
+    displayName: "Publish"
+    pool:
+      name: Azure Pipelines
+      vmImage: "windows-2019"
+
+    steps:
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'vsix'
+        downloadPath: '$(System.ArtifactsDirectory)'
+          
+    - task: TfxInstaller@3
+      inputs:
+        version: 'v0.9.x'
+
+    - task: PublishAzureDevOpsExtension@3
+      inputs:
+        connectTo: 'VsTeam'
+        connectedServiceName: 'Visual Studio Marketplace Service Connection'
+        fileType: 'vsix'
+        vsixFile: '$(Build.ArtifactStagingDirectory)/vsix/*.vsix'
+  
