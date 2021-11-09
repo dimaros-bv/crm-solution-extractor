@@ -1,7 +1,12 @@
 name: '0.1$(Rev:.r)'
 
 trigger:
-- main
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - azure-pipelines-sample.yml
 
 stages:
 - stage: 'Build'
