@@ -32,8 +32,8 @@ function ExtractSolutionAndCreatePR {
 
     # Install
     Write-Host 'Installing necessary tooling'
-    Install-Module -Name Microsoft.Xrm.Data.Powershell
-    Install-Package Microsoft.CrmSdk.CoreTools -RequiredVersion 9.1.0.92 -Destination $env:TEMP
+    Install-Module -Name Microsoft.Xrm.Data.Powershell -Force
+    Install-Package Microsoft.CrmSdk.CoreTools -RequiredVersion 9.1.0.92 -Destination $env:TEMP -Force
     $solutionPackager = "$env:TEMP\Microsoft.CrmSdk.CoreTools.9.1.0.92\content\bin\coretools\SolutionPackager.exe"
 
 
