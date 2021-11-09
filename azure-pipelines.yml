@@ -48,6 +48,8 @@ stages:
       vmImage: "windows-2019"
 
     steps:
+    - checkout: none
+
     - task: DownloadBuildArtifacts@1
       inputs:
         buildType: 'current'
