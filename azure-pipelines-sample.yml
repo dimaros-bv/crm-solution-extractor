@@ -10,6 +10,10 @@ pool:
   vmImage: windows-2019
 
 steps:
+
+- checkout: self
+  persistCredentials: true
+
 - task: D365SolutionExtractor@0
   inputs:
     branchName: 'solution-extract-$(Build.BuildNumber)'
