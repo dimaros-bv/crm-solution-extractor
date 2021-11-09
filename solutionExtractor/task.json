@@ -15,12 +15,12 @@
     "instanceNameFormat": "Extract D365 Solution",
     "inputs": [
         {
-            "name": "repositoryUrl",
+            "name": "repositoryRoot",
             "type": "string",
-            "label": "Repository Url",
-            "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "Repository url to create PR in."
+            "label": "Repository Path",
+            "defaultValue": "$(Build.SourcesDirectory)",
+            "required": false,
+            "helpMarkDown": "Sources path to be used to create a PR."
         },
         {
             "name": "gitEmail",
@@ -43,7 +43,7 @@
             "type": "string",
             "label": "Main branch",
             "defaultValue": "main",
-            "required": true,
+            "required": false,
             "helpMarkDown": "Branch name to create a PR against."
         },
         {

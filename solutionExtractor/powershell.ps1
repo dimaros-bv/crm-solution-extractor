@@ -12,7 +12,7 @@ function ExtractSolutionAndCreatePR {
     [CmdletBinding()]
     param()
 
-    $repositoryUrl = Get-VstsInput -Name 'repositoryUrl'
+    $repositoryRoot = Get-VstsInput -Name 'repositoryRoot'
     $gitEmail = Get-VstsInput -Name 'gitEmail'
     $gitName = Get-VstsInput -Name 'gitName'
     $mainBranchName = Get-VstsInput -Name 'mainBranchName'
@@ -23,10 +23,10 @@ function ExtractSolutionAndCreatePR {
     $unpackFolder = Get-VstsInput -Name 'unpackFolder'
 
     # Checkout
-    Write-Host 'Project Checkout'
-    git init
-    git remote add origin $repositoryUrl
-    git pull origin $mainBranchName
+    Write-Host 'Creating separate branch'
+    Set-Location -Path $repositoryRoot
+    git checkout $mainBranchName
+    git pull
     git checkout -b $branchName
 
 

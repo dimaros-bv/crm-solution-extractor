@@ -12,8 +12,6 @@ pool:
 steps:
 - task: D365SolutionExtractor@0
   inputs:
-    repositoryUrl: 'https://dimaros@dev.azure.com/dimaros/Dimaros/_git/Dimaros.CRM.SolutionExtractor'
-    mainBranchName: 'main'
     branchName: 'solution-extract-$(Build.BuildNumber)'
     connectionString: '$(crmConnection)'
     solutionName: 'PRTestSln'
