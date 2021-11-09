@@ -86,7 +86,6 @@ function ExtractSolutionAndCreatePR {
         -targetBranch $mainBranchName `
         -title $branchName 
         
-    az repos pr create --delete-source-branch --source-branch $branchName --target-branch $mainBranchName --title $branchName
 }
 
 ExtractSolutionAndCreatePR
