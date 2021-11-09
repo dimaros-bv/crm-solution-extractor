@@ -50,8 +50,7 @@ function CreatePullRequestRoot {
     # $bypassPolicy = Get-VstsInput -Name 'bypassPolicy' -AsBool
     # $bypassReason = Get-VstsInput -Name 'bypassReason'
         
-    #$global:token = (Get-VstsEndpoint -Name SystemVssConnection -Require).auth.parameters.AccessToken
-    $global:token = (Get-AzAccessToken).Token
+    $global:token = (Get-VstsEndpoint -Name SystemVssConnection -Require).auth.parameters.AccessToken
     
     if ($repositoryName -eq "" -or $repositoryName -eq "currentBuild" -or $isForked -eq $True) {
       $forkedRepoName = $repositoryName 
