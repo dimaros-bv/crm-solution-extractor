@@ -60,7 +60,7 @@
             "label": "CRM connection string",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "CRM connection string to be used."
+            "helpMarkDown": "CRM connection string to be used, e.g. AuthType=Office365;Url=https://contoso.crm.dynamics.com;UserName=user;Password=password."
         },
         {
             "name": "solutionName",
