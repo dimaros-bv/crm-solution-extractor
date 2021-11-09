@@ -44,7 +44,7 @@
             "label": "Main branch",
             "defaultValue": "main",
             "required": false,
-            "helpMarkDown": "Branch name to create a PR against."
+            "helpMarkDown": "Branch name to create a PR against. This branch also should be used during repository checkout."
         },
         {
             "name": "branchName",

@@ -25,8 +25,6 @@ function ExtractSolutionAndCreatePR {
     # Checkout
     Write-Host 'Creating separate branch'
     Set-Location -Path $repositoryRoot
-    git checkout $mainBranchName
-    git pull
     git checkout -b $branchName
 
 
@@ -74,13 +72,14 @@ function ExtractSolutionAndCreatePR {
     git config --global user.email $gitEmail
     git config --global user.name $gitName
 
-    git add .
+    git add $unpackFolder
     git commit -m "$solutionName solution extract $branchName"
     git push --set-upstream origin $branchName
 
 
     # Create PR
     Write-Host "Creating PR"
+    az login --identity
     az repos pr create --delete-source-branch --source-branch $branchName --target-branch $mainBranchName --title $branchName
 }
 
