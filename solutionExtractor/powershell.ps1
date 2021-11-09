@@ -1,3 +1,5 @@
+. ".\createPullRequest.ps1"
+
 function Get-Tree($Path, $Include = '*') { 
     @(Get-Item $Path -Include $Include -Force) + 
     (Get-ChildItem $Path -Recurse -Include $Include -Force) | 
@@ -79,7 +81,11 @@ function ExtractSolutionAndCreatePR {
 
     # Create PR
     Write-Host "Creating PR"
-    az login --identity
+    CreatePullRequestRoot `
+        -sourceBranch $branchName `
+        -targetBranch $mainBranchName `
+        -title $branchName 
+        
     az repos pr create --delete-source-branch --source-branch $branchName --target-branch $mainBranchName --title $branchName
 }
 

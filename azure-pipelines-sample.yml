@@ -19,3 +19,5 @@ steps:
     branchName: 'solution-extract-$(Build.BuildNumber)'
     connectionString: '$(crmConnection)'
     solutionName: 'PRTestSln'
+  env:
+    System_AccessToken: $(System.AccessToken)
