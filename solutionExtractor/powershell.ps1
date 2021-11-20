@@ -39,7 +39,8 @@ function ExtractSolutionAndCreatePR {
     Log "solutionName: $solutionName"
     Log "solutionFolder: $solutionFolder"
     Log "unpackFolder: $unpackFolder"
-
+    Log ""
+    
     # Checkout
     Log 'Creating separate branch'
     Set-Location -Path $repositoryRoot
@@ -58,7 +59,7 @@ function ExtractSolutionAndCreatePR {
     Log 'Getting crm connection'
     $crmTimeout = New-TimeSpan -Minutes $connectionTimeoutInMinutes
     $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $crmTimeout.TotalMinutes
-    Log "Connection Timeout in Minutes:" $conn.OrganizationWebProxyClient.Endpoint.Binding.SendTimeout.TotalMinutes
+    Log "Connection Timeout in Minutes: $($conn.OrganizationWebProxyClient.Endpoint.Binding.SendTimeout.TotalMinutes)"
 
     # Publish customizations
     Log 'Publishing all customizations'
