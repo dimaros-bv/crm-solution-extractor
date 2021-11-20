@@ -67,7 +67,7 @@
             "type": "string",
             "label": "CRM connection timeout in minutes",
             "defaultValue": "20",
-            "required": true,
+            "required": false,
             "helpMarkDown": "Maximum number in minutes to wait before quitting the operation."
         },
         {
