@@ -34,6 +34,7 @@ function ExtractSolutionAndCreatePR {
     # Install
     Write-Host 'Installing necessary tooling'
     Install-Module -Name Microsoft.Xrm.Data.Powershell -Force
+    Install-Module -Name Microsoft.Xrm.Tooling.CrmConnector.PowerShell -Force
     Install-Package Microsoft.CrmSdk.CoreTools -RequiredVersion 9.1.0.92 -Destination $env:TEMP -Force
     $solutionPackager = "$env:TEMP\Microsoft.CrmSdk.CoreTools.9.1.0.92\content\bin\coretools\SolutionPackager.exe"
 
@@ -41,7 +42,6 @@ function ExtractSolutionAndCreatePR {
     # Connect to CRM
     Write-Host 'Getting crm connection'
     $crmTimeout = New-TimeSpan -Minutes $connectionTimeoutInMinutes
-    Set-CrmConnectionTimeout -TimeoutInSeconds $crmTimeout.TotalSeconds
     $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $crmTimeout.TotalMinutes
     Write-Host "Connection Timeout in Minutes:" $conn.OrganizationWebProxyClient.Endpoint.Binding.SendTimeout.TotalMinutes
 
