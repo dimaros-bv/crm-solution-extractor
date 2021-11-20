@@ -40,7 +40,7 @@ function ExtractSolutionAndCreatePR {
 
     # Connect to CRM
     Write-Host 'Getting crm connection'
-    $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $connectionTimeoutInMinutes
+    $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes [int]$connectionTimeoutInMinutes
     Write-Host "Connection Timeout in Minutes:" $conn.OrganizationWebProxyClient.Endpoint.Binding.SendTimeout.TotalMinutes
 
     # Publish customizations
