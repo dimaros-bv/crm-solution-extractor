@@ -58,8 +58,11 @@ function ExtractSolutionAndCreatePR {
     # Connect to CRM
     Log 'Getting crm connection'
     $crmTimeout = New-TimeSpan -Minutes $connectionTimeoutInMinutes
-    $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes 20
-    Log "Connection Timeout in Minutes: $($conn.OrganizationWebProxyClient.Endpoint.Binding.SendTimeout.TotalMinutes)"
+    $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $crmTimeout.TotalMinutes
+    $conn
+
+    Log "OrganizationServiceProxy Timeout in Minutes: $($conn.OrganizationServiceProxy.Timeout.TotalMinutes)"
+    Log "OrganizationWebProxyClient Timeout in Minutes: $($conn.OrganizationWebProxyClient.Endpoint.Binding.SendTimeout.TotalMinutes)"
 
     # Publish customizations
     Log 'Publishing all customizations'
