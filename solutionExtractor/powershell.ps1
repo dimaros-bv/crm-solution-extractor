@@ -50,7 +50,8 @@ function ExtractSolutionAndCreatePR {
     # Install
     Log 'Installing necessary tooling'
     Install-Module -Name Microsoft.Xrm.Data.Powershell -Force
-    Install-Module -Name Microsoft.Xrm.Tooling.CrmConnector.PowerShell -Force -AllowClobber
+    Import-Module Microsoft.Xrm.Data.Powershell
+    # Install-Module -Name Microsoft.Xrm.Tooling.CrmConnector.PowerShell -Force -AllowClobber
     Install-Package Microsoft.CrmSdk.CoreTools -RequiredVersion 9.1.0.92 -Destination $env:TEMP -Force
     $solutionPackager = "$env:TEMP\Microsoft.CrmSdk.CoreTools.9.1.0.92\content\bin\coretools\SolutionPackager.exe"
 
