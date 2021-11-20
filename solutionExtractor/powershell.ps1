@@ -20,6 +20,7 @@ function ExtractSolutionAndCreatePR {
     $mainBranchName = Get-VstsInput -Name 'mainBranchName'
     $branchName = Get-VstsInput -Name 'branchName'
     $connectionString = Get-VstsInput -Name 'connectionString'
+    $connectionTimeoutInSeconds = Get-VstsInput -Name 'connectionTimeoutInSeconds'
     $solutionName = Get-VstsInput -Name 'solutionName'
     $solutionFolder = Get-VstsInput -Name 'solutionFolder'
     $unpackFolder = Get-VstsInput -Name 'unpackFolder'
@@ -40,6 +41,8 @@ function ExtractSolutionAndCreatePR {
     # Connect to CRM
     Write-Host 'Getting crm connection'
     $conn = Get-CrmConnection -ConnectionString $connectionString
+    # Increase timeout for all connections to 20 minutes
+    Set-CrmConnectionTimeout -conn $conn -TimeoutInSeconds $connectionTimeoutInSeconds
 
     # Publish customizations
     Write-Host 'Publishing all customizations'
