@@ -298,6 +298,8 @@ function CreateAzureDevOpsPullRequest() {
     $targetBranch = "refs/heads/$targetBranch"
   }
 
+  Write-Host "Base Url is: $env:System_TeamFoundationCollectionUri"
+  Write-Host "Project is: $teamProject"
   Write-Host "The repository is: $repositoryName"
   Write-Host "The Source Branch is: $sourceBranch"
   Write-Host "The Target Branch is: $targetBranch"
@@ -340,6 +342,7 @@ function CreateAzureDevOpsPullRequest() {
   }
 
   $header = @{ Authorization = "Bearer $global:token" }
+  $header
 
   if ($isForked -eq $True) {
     $url = "$env:System_TeamFoundationCollectionUri$($teamProject)/_apis/git/repositories/$($forkedRepoName)?api-version=5.0"
@@ -354,9 +357,7 @@ function CreateAzureDevOpsPullRequest() {
   $jsonBody = ConvertTo-Json $body
   Write-Host $jsonBody
   $url = "$env:System_TeamFoundationCollectionUri$($teamProject)/_apis/git/repositories/$($repositoryName)/pullrequests?api-version=4.0"
-  Write-Host "Url: $url"
-  Write-Host "Header: $header"
-  
+
   try {
     $response = Invoke-RestMethod -Uri $url -Method Post -Headers $header -Body $jsonBody -ContentType "application/json;charset=UTF-8"
     if ($Null -ne $response) {
