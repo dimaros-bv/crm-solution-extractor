@@ -59,7 +59,7 @@ function ExtractSolutionAndCreatePR {
     # Connect to CRM
     Log 'Getting crm connection'
     $crmTimeout = New-TimeSpan -Minutes $connectionTimeoutInMinutes
-    Set-CrmConnectionTimeout -TimeoutInSeconds 600
+    Set-CrmConnectionTimeout -TimeoutInSeconds $crmTimeout.TotalSeconds
     $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $crmTimeout.TotalMinutes
     $conn
 

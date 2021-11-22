@@ -345,6 +345,7 @@ function CreateAzureDevOpsPullRequest() {
   $header
 
   if ($isForked -eq $True) {
+    Write-Host "Getting forked repor details"
     $url = "$env:System_TeamFoundationCollectionUri$($teamProject)/_apis/git/repositories/$($forkedRepoName)?api-version=5.0"
     $response = Invoke-RestMethod -Uri $url -Method Get -Headers $header -ContentType "application/json;charset=UTF-8"
     $forkedRepoId = $response.id
@@ -354,12 +355,15 @@ function CreateAzureDevOpsPullRequest() {
     } 
   }
 
+  Write-Host "Createing Pull Request"
   $jsonBody = ConvertTo-Json $body
   Write-Host $jsonBody
   $url = "$env:System_TeamFoundationCollectionUri$($teamProject)/_apis/git/repositories/$($repositoryName)/pullrequests?api-version=4.0"
+  Write-Host "Url: $url"
 
   try {
     $response = Invoke-RestMethod -Uri $url -Method Post -Headers $header -Body $jsonBody -ContentType "application/json;charset=UTF-8"
+    $response
     if ($Null -ne $response) {
       # If the response not null - the create PR succeeded
       $pullRequestId = $response.pullRequestId
@@ -414,6 +418,8 @@ function CheckIfThereAreChanges {
     [string]$targetBranch
   )
 
+  Write-Host "Checking if there are changes"
+
   # Remove the refs/heads/ or merge/pull from branches name (see issue #85)
   if ($sourceBranch.Contains("heads")) {
     $sourceBranch = $sourceBranch.Remove(0, 11)
@@ -438,7 +444,10 @@ function CheckIfThereAreChanges {
     
   $url = "$env:System_TeamFoundationCollectionUri$($teamProject)/_apis/git/repositories/$($repositoryName)/diffs/commits?baseVersion=$($sourceBranch)&targetVersion=$($targetBranch)&api-version=4.0" + '&$top=2'
   $head = @{ Authorization = "Bearer $global:token" }
+  Write-Host "Url: $url"
+  $head
   $response = Invoke-RestMethod -Uri $url -Method Get -Headers $head -ContentType "application/json"
+  $response
   if ($response.behindCount -eq 0) {
     Write-Warning "***************************************************************"
     Write-Warning "There are no new commits in the source branch, no PR is needed!"
@@ -459,6 +468,8 @@ function GetReviewerId() {
   (
     [string]$reviewers
   )
+
+  Write-Host "Getting reviewers"
 
   $serverUrl = $env:System_TeamFoundationCollectionUri
   $head = @{ Authorization = "Bearer $global:token" }
@@ -612,6 +623,7 @@ function GetLinkedWorkItems {
     [string]$teamProject,
     [string]$repositoryName
   )
+  Write-Host "Getting linked items"
   $url = "$env:System_TeamFoundationCollectionUri$($teamProject)/_apis/git/repositories/$($repositoryName)/commitsBatch?api-version=4.0"
   $header = @{ Authorization = "Bearer $global:token" }
   $body = @{
