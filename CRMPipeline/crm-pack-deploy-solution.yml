@@ -1,0 +1,18 @@
+resources:
+  repositories:
+  - repository: Pipelines
+    type: git  
+    name: "KBS/Pipelines"
+
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - "Solution/EDSNBeveiligingsrollen/*"
+
+stages:
+- template: Templates/D365/pack-d365-solution.yml@Pipelines
+  parameters:
+    solutionName: 'EDSNBeveiligingsrollen'
