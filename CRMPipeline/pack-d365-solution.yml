@@ -1,0 +1,27 @@
+parameters:
+- name: solutionName
+  displayName: The solution name
+  type: string
+  default: EDSNTest
+
+stages:
+- stage: 'Build'
+  displayName: 'Package and publish solution ${{parameters.solutionName}}'
+  
+  jobs:
+  - job: 'Build'
+    displayName: 'Build'
+    pool:
+      vmImage: windows-2019
+        
+    steps:
+    - task: PowerPlatformPackSolution@0
+      displayName: 'Package ${{parameters.solutionName}} solution'
+      inputs:
+        SolutionSourceFolder: 'Solution/${{parameters.solutionName}}'
+        SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\$(Solution.Name).zip'
+                    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build Artifact: ${{parameters.solutionName}}.zip'
+      inputs:
+        PathtoPublish: '$(build.binariesdirectory)'
