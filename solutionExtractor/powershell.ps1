@@ -27,7 +27,8 @@ function ExtractSolutionAndCreatePR {
     $connectionTimeoutInMinutes = Get-VstsInput -Name 'connectionTimeoutInMinutes'
     $solutionName = Get-VstsInput -Name 'solutionName'
     $solutionFolder = Get-VstsInput -Name 'solutionFolder'
-    $unpackFolder = Get-VstsInput -Name 'unpackFolder'    
+    $unpackFolder = Get-VstsInput -Name 'unpackFolder'
+    $crmSdkPackageVersion = Get-VstsInput -Name 'crmSdkPackageVersion'
     Log "Input parameters:"
     Log "repositoryRoot: $repositoryRoot"
     Log "gitEmail: $gitEmail"
@@ -39,6 +40,7 @@ function ExtractSolutionAndCreatePR {
     Log "solutionName: $solutionName"
     Log "solutionFolder: $solutionFolder"
     Log "unpackFolder: $unpackFolder"
+    Log "crmSdkPackageVersion: $crmSdkPackageVersion"
     Log ""
 
     # Checkout
@@ -52,8 +54,8 @@ function ExtractSolutionAndCreatePR {
     Install-Module -Name Microsoft.Xrm.Data.Powershell -Force
     Import-Module Microsoft.Xrm.Data.Powershell
     # Install-Module -Name Microsoft.Xrm.Tooling.CrmConnector.PowerShell -Force -AllowClobber
-    Install-Package Microsoft.CrmSdk.CoreTools -RequiredVersion 9.1.0.92 -Destination $env:TEMP -Force
-    $solutionPackager = "$env:TEMP\Microsoft.CrmSdk.CoreTools.9.1.0.92\content\bin\coretools\SolutionPackager.exe"
+    Install-Package Microsoft.CrmSdk.CoreTools -RequiredVersion $crmSdkPackageVersion -Destination $env:TEMP -Force
+    $solutionPackager = "$env:TEMP\Microsoft.CrmSdk.CoreTools.$crmSdkPackageVersion\content\bin\coretools\SolutionPackager.exe"
 
 
     # Connect to CRM

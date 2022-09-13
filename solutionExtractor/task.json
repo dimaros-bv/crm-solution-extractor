@@ -9,7 +9,7 @@
     "author": "Dimaros B.V.",
     "version": {
         "Major": 0,
-        "Minor": 1,
+        "Minor": 2,
         "Patch": 0
     },
     "instanceNameFormat": "Extract D365 Solution",
@@ -93,6 +93,14 @@
             "defaultValue": "Solution",
             "required": false,
             "helpMarkDown": "Folder with in the repository to unpack solution to."
+        },
+        {
+            "name": "crmSdkPackageVersion",
+            "type": "string",
+            "label": "CrmSdk version",
+            "defaultValue": "9.1.0.92",
+            "required": false,
+            "helpMarkDown": "Package version for Microsoft.CrmSdk.CoreTools."
         }
     ],
     "execution": {
