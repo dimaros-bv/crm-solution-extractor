@@ -46,8 +46,16 @@ function ExtractSolutionAndCreatePR {
     # Checkout
     Log 'Creating separate branch'
     Set-Location -Path $repositoryRoot
+    $isExisingBranch = $False
+    git checkout -b $branchName origin/$branchName
+    if ($?) {
+        Log "Using exising branch origin/$branchName"
+        $isExisingBranch = $True
+    } else {
+        Log "Creating a new branch $branchName"
     git checkout -b $branchName
-
+        git branch $branchName -u origin/$branchName
+    }
 
     # Install
     Log 'Installing necessary tooling'
@@ -103,15 +111,19 @@ function ExtractSolutionAndCreatePR {
 
     git add $unpackFolder
     git commit -m "$solutionName solution extract $branchName"
-    git push --set-upstream origin $branchName
+    git push
 
 
     # Create PR
+    if ($isExisingBranch) {
+        Log "Skipping PR creation because branch already exists"
+    } else {
     Log "Creating Pull Request"
     CreatePullRequestRoot `
         -sourceBranch $branchName `
         -targetBranch $mainBranchName `
-        -title $branchName 
+            -title "$solutionName solution extract"
+    }
         
 }
 
