@@ -43,8 +43,9 @@ function ExtractSolutionAndCreatePR {
     Log "crmSdkPackageVersion: $crmSdkPackageVersion"
     Log ""
 
+
     # Checkout
-    Log 'Creating separate branch'
+    Log 'Checking out a branch'
     Set-Location -Path $repositoryRoot
     $isExisingBranch = $False
     git checkout -b $branchName origin/$branchName
@@ -53,15 +54,15 @@ function ExtractSolutionAndCreatePR {
         $isExisingBranch = $True
     } else {
         Log "Creating a new branch $branchName"
-    git checkout -b $branchName
+        git checkout -b $branchName
         git branch $branchName -u origin/$branchName
     }
 
     # Install
-    Log 'Installing necessary tooling'
+    Log 'Installing PS module Microsoft.Xrm.Data.Powershell'
     Install-Module -Name Microsoft.Xrm.Data.Powershell -Force
     Import-Module Microsoft.Xrm.Data.Powershell
-    # Install-Module -Name Microsoft.Xrm.Tooling.CrmConnector.PowerShell -Force -AllowClobber
+    Log 'Installing nuget package Microsoft.CrmSdk.CoreTools'
     Install-Package Microsoft.CrmSdk.CoreTools -RequiredVersion $crmSdkPackageVersion -Destination $env:TEMP -Force
     $solutionPackager = "$env:TEMP\Microsoft.CrmSdk.CoreTools.$crmSdkPackageVersion\content\bin\coretools\SolutionPackager.exe"
 
@@ -71,10 +72,14 @@ function ExtractSolutionAndCreatePR {
     $crmTimeout = New-TimeSpan -Minutes $connectionTimeoutInMinutes
     Set-CrmConnectionTimeout -TimeoutInSeconds $crmTimeout.TotalSeconds
     $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $crmTimeout.TotalMinutes
-    $conn
+    Log "IsReady: $($conn.IsReady)"
+    Log "CrmConnectOrgUriActual: $($conn.CrmConnectOrgUriActual)"
+    Log "ConnectedOrgFriendlyName: $($conn.ConnectedOrgFriendlyName)"
+    Log "ConnectedOrgVersion: $($conn.ConnectedOrgVersion)"
 
     Log "OrganizationServiceProxy Timeout in Minutes: $($conn.OrganizationServiceProxy.Timeout.TotalMinutes)"
     Log "OrganizationWebProxyClient Timeout in Minutes: $($conn.OrganizationWebProxyClient.Endpoint.Binding.SendTimeout.TotalMinutes)"
+
 
     # Publish customizations
     Log 'Publishing all customizations'
@@ -82,9 +87,10 @@ function ExtractSolutionAndCreatePR {
 
 
     # Export
-    If (!(test-path $solutionFolder)) {
+    if (!(test-path $solutionFolder)) {
         New-Item -ItemType Directory -Force -Path $solutionFolder
     }
+
     Log 'Exporting unmanaged solution'
     Export-CrmSolution -conn $conn -SolutionName $solutionName -SolutionFilePath $solutionFolder -SolutionZipFileName "$solutionName.zip"
 
@@ -118,10 +124,10 @@ function ExtractSolutionAndCreatePR {
     if ($isExisingBranch) {
         Log "Skipping PR creation because branch already exists"
     } else {
-    Log "Creating Pull Request"
-    CreatePullRequestRoot `
-        -sourceBranch $branchName `
-        -targetBranch $mainBranchName `
+        Log "Creating Pull Request"
+        CreatePullRequestRoot `
+            -sourceBranch $branchName `
+            -targetBranch $mainBranchName `
             -title "$solutionName solution extract"
     }
         
