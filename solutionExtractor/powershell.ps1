@@ -21,41 +21,40 @@ function ExtractSolutionAndCreatePR {
     $repositoryRoot = Get-VstsInput -Name 'repositoryRoot'
     $gitEmail = Get-VstsInput -Name 'gitEmail'
     $gitName = Get-VstsInput -Name 'gitName'
-    $mainBranchName = Get-VstsInput -Name 'mainBranchName'
-    $branchName = Get-VstsInput -Name 'branchName'
+    $targetBranchName = Get-VstsInput -Name 'targetBranchName'
+    $newBranchName = Get-VstsInput -Name 'newBranchName'
     $connectionString = Get-VstsInput -Name 'connectionString'
     $connectionTimeoutInMinutes = Get-VstsInput -Name 'connectionTimeoutInMinutes'
     $solutionName = Get-VstsInput -Name 'solutionName'
-    $solutionFolder = Get-VstsInput -Name 'solutionFolder'
     $unpackFolder = Get-VstsInput -Name 'unpackFolder'
     $crmSdkPackageVersion = Get-VstsInput -Name 'crmSdkPackageVersion'
     Log "Input parameters:"
     Log "repositoryRoot: $repositoryRoot"
     Log "gitEmail: $gitEmail"
     Log "gitName: $gitName"
-    Log "mainBranchName: $mainBranchName"
-    Log "branchName: $branchName"
+    Log "targetBranchName: $targetBranchName"
+    Log "newBranchName: $newBranchName"
     Log "connectionString: ***"
     Log "connectionTimeoutInMinutes: $connectionTimeoutInMinutes"
     Log "solutionName: $solutionName"
-    Log "solutionFolder: $solutionFolder"
     Log "unpackFolder: $unpackFolder"
     Log "crmSdkPackageVersion: $crmSdkPackageVersion"
     Log ""
-
+    
+    $solutionFolder = "$env:TEMP/$solutionName"
 
     # Checkout
     Log 'Checking out a branch'
     Set-Location -Path $repositoryRoot
     $isExisingBranch = $False
-    git checkout -b $branchName origin/$branchName
+    git checkout -b $newBranchName origin/$newBranchName
     if ($?) {
-        Log "Using exising branch origin/$branchName"
+        Log "Using exising branch origin/$newBranchName"
         $isExisingBranch = $True
     } else {
-        Log "Creating a new branch $branchName"
-        git checkout -b $branchName
-        git branch $branchName -u origin/$branchName
+        Log "Creating a new branch $newBranchName"
+        git checkout -b $newBranchName
+        git branch $newBranchName -u origin/$newBranchName
     }
 
     # Install
@@ -70,7 +69,6 @@ function ExtractSolutionAndCreatePR {
     # Connect to CRM
     Log 'Getting crm connection'
     $crmTimeout = New-TimeSpan -Minutes $connectionTimeoutInMinutes
-    Set-CrmConnectionTimeout -TimeoutInSeconds $crmTimeout.TotalSeconds
     $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $crmTimeout.TotalMinutes
     Log "IsReady: $($conn.IsReady)"
     Log "CrmConnectOrgUriActual: $($conn.CrmConnectOrgUriActual)"
@@ -106,9 +104,6 @@ function ExtractSolutionAndCreatePR {
     # Cleanup
     Log "Cleanup"
     Remove-Tree $solutionFolder
-    New-Item -ItemType directory -Path $solutionFolder
-    New-Item -ItemType file -Path "$solutionFolder\.placeholder"
-
 
     # Commit & push
     Log "Pushing changes to remote"
@@ -116,7 +111,7 @@ function ExtractSolutionAndCreatePR {
     git config --global user.name $gitName
 
     git add $unpackFolder
-    git commit -m "$solutionName solution extract $branchName"
+    git commit -m "$solutionName solution extract"
     git push
 
 
@@ -126,8 +121,8 @@ function ExtractSolutionAndCreatePR {
     } else {
         Log "Creating Pull Request"
         CreatePullRequestRoot `
-            -sourceBranch $branchName `
-            -targetBranch $mainBranchName `
+            -sourceBranch $newBranchName `
+            -targetBranch $targetBranchName `
             -title "$solutionName solution extract"
     }
         
