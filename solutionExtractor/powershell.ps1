@@ -46,11 +46,11 @@ function ExtractSolutionAndCreatePR {
     # Checkout
     Log 'Checking out a branch'
     Set-Location -Path $repositoryRoot
-    $isExisingBranch = $False
+    $isExistingBranch = $False
     git checkout -b $newBranchName origin/$newBranchName
     if ($?) {
-        Log "Using exising branch origin/$newBranchName"
-        $isExisingBranch = $True
+        Log "Using existing branch origin/$newBranchName"
+        $isExistingBranch = $True
     } else {
         Log "Creating a new branch $newBranchName"
         git checkout -b $newBranchName
@@ -116,7 +116,7 @@ function ExtractSolutionAndCreatePR {
 
 
     # Create PR
-    if ($isExisingBranch) {
+    if ($isExistingBranch) {
         Log "Skipping PR creation because branch already exists"
     } else {
         Log "Creating Pull Request"
