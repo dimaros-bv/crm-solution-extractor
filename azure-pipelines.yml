@@ -1,12 +1,10 @@
-name: '0.2$(Rev:.r)'
+name: '1.0$(Rev:.r)'
 
 trigger:
-  branches:
-    include:
-      - main
-  paths:
-    exclude:
-      - azure-pipelines-sample.yml
+- main
+
+pool:
+  vmImage: 'windows-2022'
 
 stages:
 - stage: 'Build'
@@ -14,57 +12,65 @@ stages:
   jobs:
   - job: Build
     displayName: "Build"
-    pool:
-      name: Azure Pipelines
-      vmImage: "windows-2019"
-    
     steps:
-      - task: TfxInstaller@3
+      - task: TfxInstaller@4
+        displayName: 'Use Node CLI for Azure DevOps'
         inputs:
-          version: 'v0.9.x'
-      - task: PackageAzureDevOpsExtension@3
+          version: '0.x'
+          checkLatest: true
+      - task: PackageAzureDevOpsExtension@4
+        displayName: 'Package Extension'
+        name: 'packageStep'
         inputs:
           rootFolder: '$(Build.SourcesDirectory)'
           outputPath: '$(Build.ArtifactStagingDirectory)'
           updateTasksVersion: true
           extensionPricing: 'free'
           extensionVersion: '$(Build.BuildNumber)'
-        
-      - task: PublishBuildArtifacts@1
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish vsix'
         inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: 'vsix'
+          publishLocation: pipeline
+          targetPath: '$(packageStep.Extension.OutputPath)'
+          artifact: 'vsix'
         condition: succeededOrFailed()
       
 - stage: Publish
   displayName: 'Publish to Marketplace'
-  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   dependsOn: 'Build'
   jobs:
-  - job: Publish
-    displayName: "Publish"
-    pool:
-      name: Azure Pipelines
-      vmImage: "windows-2019"
+  - deployment: solution-extractor-deployment
+    environment: solution-extractor
+    strategy: 
+      runOnce:
+        deploy:
+          steps:
+          - task: TfxInstaller@4
+            displayName: 'Use Node CLI for Azure DevOps'
+            inputs:
+              version: '0.x'
+              checkLatest: true
 
-    steps:
-    - checkout: none
+          - task: PublishAzureDevOpsExtension@3
+            name: 'publishProd'
+            inputs:
+              connectTo: 'VsTeam'
+              connectedServiceName: 'Visual Studio Marketplace Service Connection'
+              fileType: 'vsix'
+              vsixFile: '$(Build.ArtifactStagingDirectory)/vsix/*.vsix'
 
-    - task: DownloadBuildArtifacts@1
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'vsix'
-        downloadPath: '$(System.ArtifactsDirectory)'
-          
-    - task: TfxInstaller@3
-      inputs:
-        version: 'v0.9.x'
-
-    - task: PublishAzureDevOpsExtension@3
-      inputs:
-        connectTo: 'VsTeam'
-        connectedServiceName: 'Visual Studio Marketplace Service Connection'
-        fileType: 'vsix'
-        vsixFile: '$(Build.ArtifactStagingDirectory)/vsix/*.vsix'
-  
+          - task: GitHubRelease@1
+            inputs:
+              gitHubConnection: 'Dimaros'
+              repositoryName: '$(Build.Repository.Name)'
+              action: 'create'
+              target: '$(Build.SourceVersion)'
+              tagSource: 'userSpecifiedTag'
+              tag: 'v$(Build.BuildNumber)'
+              title: 'v$(Build.BuildNumber)'
+              releaseNotesSource: 'inline'
+              assets: '$(publishProd.Extension.OutputPath)*'
+              changeLogCompareToRelease: 'lastFullRelease'
+              changeLogType: 'commitBased'

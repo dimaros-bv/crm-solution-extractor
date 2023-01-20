@@ -18,8 +18,8 @@ Azure pipelines task that extracts a Dynamics 365 solution and creates a PR.
 ```yaml
 - task: D365SolutionExtractor@1
   inputs:
-    branchName: 'solution-extract-$(Build.BuildNumber)'
-    connectionString: '$(crmConnection)'
+    newBranchName: 'solution-extract-$(Build.BuildNumber)'
+    connectionString: '$(dataverseConnectionString)'
     solutionName: 'MyAwesomeSolution'
   env:
     System_AccessToken: $(System.AccessToken) // PAT of a build-in service user

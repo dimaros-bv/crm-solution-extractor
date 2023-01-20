@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - none
 
@@ -14,10 +9,10 @@ steps:
 - checkout: self
   persistCredentials: true
 
-- task: D365SolutionExtractor@0
+- task: D365SolutionExtractor@1
   inputs:
-    branchName: 'solution-extract-$(Build.BuildNumber)'
-    connectionString: '$(crmConnection)'
-    solutionName: 'PRTestSln'
+    newBranchName: 'solution-extract-$(Build.BuildNumber)'
+    connectionString: '$(dataverseConnectionString)'
+    solutionName: 'MyAwesomeSolution'
   env:
-    System_AccessToken: $(System.AccessToken)
+    System_AccessToken: $(System.AccessToken) // PAT of a build-in service user
