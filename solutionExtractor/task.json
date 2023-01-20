@@ -60,7 +60,7 @@
             "label": "Dataverse connection string",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Dataverse connection string to be used."
+            "helpMarkDown": "Dataverse connection string to be used. [See docs](https://learn.microsoft.com/en-us/powershell/module/microsoft.xrm.tooling.crmconnector.powershell/get-crmconnection?view=pa-ps-latest#parameters)."
         },
         {
             "name": "connectionTimeoutInMinutes",
