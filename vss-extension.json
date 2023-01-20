@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "d365-solution-extractor",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "name": "D365 Solution Extractor",
     "publisher": "dimaros",
     "public": false,
