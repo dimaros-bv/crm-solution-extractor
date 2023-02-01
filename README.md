@@ -22,7 +22,7 @@ Azure pipelines task that extracts a Dynamics 365 solution and creates a PR.
     connectionString: '$(dataverseConnectionString)'
     solutionName: 'MyAwesomeSolution'
   env:
-    System_AccessToken: $(System.AccessToken) // PAT of a build-in service user
+    System_AccessToken: $(System.AccessToken) # PAT of a built-in service user
 ```
 
 ## Features
