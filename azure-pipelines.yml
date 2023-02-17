@@ -59,7 +59,7 @@ stages:
               connectTo: 'VsTeam'
               connectedServiceName: 'Visual Studio Marketplace Service Connection'
               fileType: 'vsix'
-              vsixFile: '$(Build.ArtifactStagingDirectory)/vsix/*.vsix'
+              vsixFile: '$(Pipeline.Workspace)/vsix/*.vsix'
 
           - task: GitHubRelease@1
             inputs:
