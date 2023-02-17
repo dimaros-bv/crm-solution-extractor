@@ -342,7 +342,6 @@ function CreateAzureDevOpsPullRequest() {
   }
 
   $header = @{ Authorization = "Bearer $global:token" }
-  $header
 
   if ($isForked -eq $True) {
     Write-Host "Getting forked repor details"
@@ -371,6 +370,7 @@ function CreateAzureDevOpsPullRequest() {
       Write-Host "******** Success ********"
       Write-Host "*************************"
       Write-Host "Pull Request $pullRequestId created."
+      Write-Host "$env:System_TeamFoundationCollectionUri$($teamProject)/_git/$($repositoryName)/pullrequest/$($pullRequestId)"
             
       if ($passPullRequestIdBackToADO) {
         $global:pullRequestIds += "$pullRequestId;"

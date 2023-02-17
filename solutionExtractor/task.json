@@ -8,8 +8,8 @@
     "category": "Utility",
     "author": "Dimaros B.V.",
     "version": {
-        "Major": 0,
-        "Minor": 2,
+        "Major": 1,
+        "Minor": 0,
         "Patch": 0
     },
     "instanceNameFormat": "Extract D365 Solution",
@@ -39,17 +39,17 @@
             "helpMarkDown": "Name to be used for a commit."
         },
         {
-            "name": "mainBranchName",
+            "name": "targetBranchName",
             "type": "string",
-            "label": "Main branch",
+            "label": "Target Branch Name",
             "defaultValue": "main",
             "required": false,
-            "helpMarkDown": "Branch name to create a PR against. This branch also should be used during repository checkout."
+            "helpMarkDown": "Branch name to create a PR against."
         },
         {
-            "name": "branchName",
+            "name": "newBranchName",
             "type": "string",
-            "label": "Branch Name",
+            "label": "New Branch Name",
             "defaultValue": "solution-extract-$(Build.BuildNumber)",
             "required": true,
             "helpMarkDown": "Branch name to create a PR from."
@@ -57,15 +57,15 @@
         {
             "name": "connectionString",
             "type": "string",
-            "label": "CRM connection string",
+            "label": "Dataverse connection string",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "CRM connection string to be used, e.g. AuthType=Office365;Url=https://contoso.crm.dynamics.com;UserName=user;Password=password."
+            "helpMarkDown": "Dataverse connection string to be used. [See docs](https://learn.microsoft.com/en-us/powershell/module/microsoft.xrm.tooling.crmconnector.powershell/get-crmconnection?view=pa-ps-latest#parameters)."
         },
         {
             "name": "connectionTimeoutInMinutes",
             "type": "string",
-            "label": "CRM connection timeout in minutes",
+            "label": "Operation timeout (minutes)",
             "defaultValue": "20",
             "required": false,
             "helpMarkDown": "Maximum number in minutes to wait before quitting the operation."
@@ -79,14 +79,6 @@
             "helpMarkDown": "Solution Name."
         },
         {
-            "name": "solutionFolder",
-            "type": "string",
-            "label": "Extract Folder",
-            "defaultValue": "Temp",
-            "required": false,
-            "helpMarkDown": "Folder name to extract solutions to."
-        },
-        {
             "name": "unpackFolder",
             "type": "string",
             "label": "Unpack Folder",
@@ -98,7 +90,7 @@
             "name": "crmSdkPackageVersion",
             "type": "string",
             "label": "CrmSdk version",
-            "defaultValue": "9.1.0.92",
+            "defaultValue": "9.1.0.115",
             "required": false,
             "helpMarkDown": "Package version for Microsoft.CrmSdk.CoreTools."
         }

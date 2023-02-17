@@ -21,39 +21,47 @@ function ExtractSolutionAndCreatePR {
     $repositoryRoot = Get-VstsInput -Name 'repositoryRoot'
     $gitEmail = Get-VstsInput -Name 'gitEmail'
     $gitName = Get-VstsInput -Name 'gitName'
-    $mainBranchName = Get-VstsInput -Name 'mainBranchName'
-    $branchName = Get-VstsInput -Name 'branchName'
+    $targetBranchName = Get-VstsInput -Name 'targetBranchName'
+    $newBranchName = Get-VstsInput -Name 'newBranchName'
     $connectionString = Get-VstsInput -Name 'connectionString'
     $connectionTimeoutInMinutes = Get-VstsInput -Name 'connectionTimeoutInMinutes'
     $solutionName = Get-VstsInput -Name 'solutionName'
-    $solutionFolder = Get-VstsInput -Name 'solutionFolder'
     $unpackFolder = Get-VstsInput -Name 'unpackFolder'
     $crmSdkPackageVersion = Get-VstsInput -Name 'crmSdkPackageVersion'
     Log "Input parameters:"
     Log "repositoryRoot: $repositoryRoot"
     Log "gitEmail: $gitEmail"
     Log "gitName: $gitName"
-    Log "mainBranchName: $mainBranchName"
-    Log "branchName: $branchName"
+    Log "targetBranchName: $targetBranchName"
+    Log "newBranchName: $newBranchName"
     Log "connectionString: ***"
     Log "connectionTimeoutInMinutes: $connectionTimeoutInMinutes"
     Log "solutionName: $solutionName"
-    Log "solutionFolder: $solutionFolder"
     Log "unpackFolder: $unpackFolder"
     Log "crmSdkPackageVersion: $crmSdkPackageVersion"
     Log ""
+    
+    $solutionFolder = "$env:TEMP/$solutionName"
 
     # Checkout
-    Log 'Creating separate branch'
+    Log 'Checking out a branch'
     Set-Location -Path $repositoryRoot
-    git checkout -b $branchName
-
+    $isExistingBranch = $False
+    git checkout -b $newBranchName origin/$newBranchName
+    if ($?) {
+        Log "Using existing branch origin/$newBranchName"
+        $isExistingBranch = $True
+    } else {
+        Log "Creating a new branch $newBranchName"
+        git checkout -b $newBranchName
+        git branch $newBranchName -u origin/$newBranchName
+    }
 
     # Install
-    Log 'Installing necessary tooling'
+    Log 'Installing PS module Microsoft.Xrm.Data.Powershell'
     Install-Module -Name Microsoft.Xrm.Data.Powershell -Force
     Import-Module Microsoft.Xrm.Data.Powershell
-    # Install-Module -Name Microsoft.Xrm.Tooling.CrmConnector.PowerShell -Force -AllowClobber
+    Log 'Installing nuget package Microsoft.CrmSdk.CoreTools'
     Install-Package Microsoft.CrmSdk.CoreTools -RequiredVersion $crmSdkPackageVersion -Destination $env:TEMP -Force
     $solutionPackager = "$env:TEMP\Microsoft.CrmSdk.CoreTools.$crmSdkPackageVersion\content\bin\coretools\SolutionPackager.exe"
 
@@ -61,12 +69,15 @@ function ExtractSolutionAndCreatePR {
     # Connect to CRM
     Log 'Getting crm connection'
     $crmTimeout = New-TimeSpan -Minutes $connectionTimeoutInMinutes
-    Set-CrmConnectionTimeout -TimeoutInSeconds $crmTimeout.TotalSeconds
     $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $crmTimeout.TotalMinutes
-    $conn
+    Log "IsReady: $($conn.IsReady)"
+    Log "CrmConnectOrgUriActual: $($conn.CrmConnectOrgUriActual)"
+    Log "ConnectedOrgFriendlyName: $($conn.ConnectedOrgFriendlyName)"
+    Log "ConnectedOrgVersion: $($conn.ConnectedOrgVersion)"
 
     Log "OrganizationServiceProxy Timeout in Minutes: $($conn.OrganizationServiceProxy.Timeout.TotalMinutes)"
     Log "OrganizationWebProxyClient Timeout in Minutes: $($conn.OrganizationWebProxyClient.Endpoint.Binding.SendTimeout.TotalMinutes)"
+
 
     # Publish customizations
     Log 'Publishing all customizations'
@@ -74,9 +85,10 @@ function ExtractSolutionAndCreatePR {
 
 
     # Export
-    If (!(test-path $solutionFolder)) {
+    if (!(test-path $solutionFolder)) {
         New-Item -ItemType Directory -Force -Path $solutionFolder
     }
+
     Log 'Exporting unmanaged solution'
     Export-CrmSolution -conn $conn -SolutionName $solutionName -SolutionFilePath $solutionFolder -SolutionZipFileName "$solutionName.zip"
 
@@ -92,9 +104,6 @@ function ExtractSolutionAndCreatePR {
     # Cleanup
     Log "Cleanup"
     Remove-Tree $solutionFolder
-    New-Item -ItemType directory -Path $solutionFolder
-    New-Item -ItemType file -Path "$solutionFolder\.placeholder"
-
 
     # Commit & push
     Log "Pushing changes to remote"
@@ -102,16 +111,20 @@ function ExtractSolutionAndCreatePR {
     git config --global user.name $gitName
 
     git add $unpackFolder
-    git commit -m "$solutionName solution extract $branchName"
-    git push --set-upstream origin $branchName
+    git commit -m "$solutionName solution extract"
+    git push
 
 
     # Create PR
-    Log "Creating Pull Request"
-    CreatePullRequestRoot `
-        -sourceBranch $branchName `
-        -targetBranch $mainBranchName `
-        -title $branchName 
+    if ($isExistingBranch) {
+        Log "Skipping PR creation because branch already exists"
+    } else {
+        Log "Creating Pull Request"
+        CreatePullRequestRoot `
+            -sourceBranch $newBranchName `
+            -targetBranch $targetBranchName `
+            -title "$solutionName solution extract"
+    }
         
 }
 
