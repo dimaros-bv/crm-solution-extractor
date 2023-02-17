@@ -63,7 +63,7 @@ stages:
 
           - task: GitHubRelease@1
             inputs:
-              gitHubConnection: 'Dimaros'
+              gitHubConnection: 'DimarosBV'
               repositoryName: '$(Build.Repository.Name)'
               action: 'create'
               target: '$(Build.SourceVersion)'
