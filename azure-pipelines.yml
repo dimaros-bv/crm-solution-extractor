@@ -41,7 +41,7 @@ stages:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   dependsOn: 'Build'
   jobs:
-  - deployment: solution-extractor-deployment
+  - deployment: SolutionExtractorDeployment
     environment: solution-extractor
     strategy: 
       runOnce:
