@@ -41,7 +41,7 @@ function ExtractSolutionAndCreatePR {
     Log "crmSdkPackageVersion: $crmSdkPackageVersion"
     Log ""
     
-    $solutionFolder = "$(Build.ArtifactStagingDirectory)/$solutionName"
+    $solutionFolder = "$env:BUILD_ARTIFACTSTAGINGDIRECTORY/$solutionName"
     Log "Solution extract folder: $solutionFolder"
 
     # Checkout
