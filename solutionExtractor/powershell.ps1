@@ -100,11 +100,6 @@ function ExtractSolutionAndCreatePR {
     Log 'Unpacking solution'
     & "$solutionPackager" /action:Extract /zipfile:"$solutionFolder\$solutionName.zip" /folder:"$unpackFolder\$solutionName" /packagetype:Both /allowWrite:Yes /allowDelete:Yes
 
-
-    # Cleanup
-    Log "Cleanup"
-    Remove-Tree $solutionFolder
-
     # Commit & push
     Log "Pushing changes to remote"
     git config --global user.email $gitEmail
