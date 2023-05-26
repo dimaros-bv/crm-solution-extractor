@@ -41,7 +41,8 @@ function ExtractSolutionAndCreatePR {
     Log "crmSdkPackageVersion: $crmSdkPackageVersion"
     Log ""
     
-    $solutionFolder = "$env:TEMP/$solutionName"
+    $solutionFolder = "$env:BUILD_ARTIFACTSTAGINGDIRECTORY/$solutionName"
+    Log "Solution extract folder: $solutionFolder"
 
     # Checkout
     Log 'Checking out a branch'
@@ -98,11 +99,6 @@ function ExtractSolutionAndCreatePR {
     # Unpack
     Log 'Unpacking solution'
     & "$solutionPackager" /action:Extract /zipfile:"$solutionFolder\$solutionName.zip" /folder:"$unpackFolder\$solutionName" /packagetype:Both /allowWrite:Yes /allowDelete:Yes
-
-
-    # Cleanup
-    Log "Cleanup"
-    Remove-Tree $solutionFolder
 
     # Commit & push
     Log "Pushing changes to remote"

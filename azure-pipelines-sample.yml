@@ -16,3 +16,8 @@ steps:
     solutionName: 'MyAwesomeSolution'
   env:
     System_AccessToken: $(System.AccessToken) // PAT of a build-in service user
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)/MyAwesomeSolution
+    artifactName: MyAwesomeSolution

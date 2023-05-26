@@ -30,6 +30,9 @@ Azure pipelines task that extracts a Dynamics 365 solution and creates a PR.
 ### Push to the same branch.
 If a branch already exists it will push the changes to this branch and **PR won't be created** in this case.
 
+### Access to extracted solution files.
+`<solution>.zip` and `<solution>_managed.zip` could be published from `$(Build.ArtifactStagingDirectory)/<solution>`.
+
 ## Parameters
 | Label                       | Name                       | Description                                                                                                                                                                         | Default Value                         |
 |-----------------------------|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------|
