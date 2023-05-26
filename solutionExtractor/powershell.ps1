@@ -47,14 +47,13 @@ function ExtractSolutionAndCreatePR {
     Log 'Checking out a branch'
     Set-Location -Path $repositoryRoot
     $isExistingBranch = $False
-    git checkout -b $newBranchName origin/$newBranchName
+    git switch $newBranchName
     if ($?) {
         Log "Using existing branch origin/$newBranchName"
         $isExistingBranch = $True
     } else {
         Log "Creating a new branch $newBranchName"
         git checkout -b $newBranchName
-        git branch $newBranchName -u origin/$newBranchName
     }
 
     # Install
@@ -112,7 +111,7 @@ function ExtractSolutionAndCreatePR {
 
     git add $unpackFolder
     git commit -m "$solutionName solution extract"
-    git push
+    git push --set-upstream origin $newBranchName
 
 
     # Create PR
