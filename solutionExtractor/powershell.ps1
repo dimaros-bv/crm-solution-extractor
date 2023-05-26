@@ -41,7 +41,8 @@ function ExtractSolutionAndCreatePR {
     Log "crmSdkPackageVersion: $crmSdkPackageVersion"
     Log ""
     
-    $solutionFolder = "$env:TEMP/$solutionName"
+    $solutionFolder = "$(Build.ArtifactStagingDirectory)/$solutionName"
+    Log "Solution extract folder: $solutionFolder"
 
     # Checkout
     Log 'Checking out a branch'
