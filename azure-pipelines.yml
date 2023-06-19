@@ -44,6 +44,8 @@ stages:
     - task: PowerShell@2
       inputs:
         filePath: "$(Build.SourcesDirectory)/solutionExtractor/tests/ExtractSolutionAndCreatePR.IntegrationTest.ps1"
+      env:
+        CRM_CONNECTION: $(crmConnection)
   - job: waitForValidation  
     displayName: "Wait for validation"
     pool: server

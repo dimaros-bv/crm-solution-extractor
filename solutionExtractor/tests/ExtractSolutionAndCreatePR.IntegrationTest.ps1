@@ -12,7 +12,7 @@ function Get-VstsInput {
     gitName                    = "Integration Test"
     targetBranchName           = "main"
     newBranchName              = "solution-extract-$env:BUILD_BUILDNUMBER"
-    connectionString           = "$env:CRMCONNECTION"
+    connectionString           = "$env:CRM_CONNECTION"
     connectionTimeoutInMinutes = "20"
     solutionName               = "PRTestSln"
     unpackFolder               = "Solution"
