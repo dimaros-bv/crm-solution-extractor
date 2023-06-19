@@ -44,9 +44,10 @@ stages:
     - task: PowerShell@2
       inputs:
         filePath: "$(Build.SourcesDirectory)/solutionExtractor/tests/ExtractSolutionAndCreatePR.IntegrationTest.ps1"
-  - job: waitForValidation
+  - job: waitForValidation  
     displayName: "Wait for validation"
     pool: server
+    dependsOn: 'IntegrationTest'
     timeoutInMinutes: "1440" # job times out in 24 hours
     steps:
     - task: ManualValidation@0
