@@ -1,4 +1,4 @@
-. ".\createPullRequest.ps1"
+. "$PSScriptRoot\CreatePullRequest.ps1"
 
 function Get-Tree($Path, $Include = '*') { 
     @(Get-Item $Path -Include $Include -Force) + 
@@ -122,5 +122,3 @@ function ExtractSolutionAndCreatePR {
     }
         
 }
-
-ExtractSolutionAndCreatePR

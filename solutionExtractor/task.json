@@ -97,7 +97,7 @@
     ],
     "execution": {
         "PowerShell3": {
-            "target": "powershell.ps1",
+            "target": "Run.ps1",
             "platforms": [
                 "windows"
             ],
