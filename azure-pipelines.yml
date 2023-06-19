@@ -35,7 +35,21 @@ stages:
           targetPath: '$(packageStep.Extension.OutputPath)'
           artifact: 'vsix'
         condition: succeededOrFailed()
-      
+
+- stage: 'Test'
+  jobs:
+  - job: IntegrationTest
+    displayName: "Integration Test"
+    steps:
+    - task: PowerShell@2
+      inputs:
+        filePath: "$(Build.SourcesDirectory)/solutionExtractor/tests/ExtractSolutionAndCreatePR.IntegrationTest.ps1"
+    - task: ManualValidation@0
+      inputs:
+        notifyUsers: "D365SolutionExtractor-Support@dimaros.nl"
+        instructions: |
+          - Check if PR is created.
+
 - stage: Publish
   displayName: 'Publish to Marketplace'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
