@@ -58,7 +58,6 @@ stages:
 - stage: Publish
   displayName: 'Publish to Marketplace'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-  dependsOn: 'Build'
   jobs:
   - deployment: SolutionExtractorDeployment
     environment: solution-extractor
