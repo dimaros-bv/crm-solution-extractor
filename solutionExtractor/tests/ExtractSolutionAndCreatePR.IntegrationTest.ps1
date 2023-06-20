@@ -1,3 +1,10 @@
+param (
+  [string]$repositoryRoot,
+  [string]$newBranchName,
+  [string]$connectionString
+)
+
+
 function Get-VstsInput {
   [CmdletBinding()]
   param (
@@ -7,12 +14,12 @@ function Get-VstsInput {
 
   # Define your mock input values here
   $mockInputs = @{
-    repositoryRoot             = "$env:BUILD_SOURCESDIRECTORY"
+    repositoryRoot             = "$repositoryRoot"
     gitEmail                   = "tests@dimaros.nl"
     gitName                    = "Integration Test"
     targetBranchName           = "main"
-    newBranchName              = "solution-extract-$env:BUILD_BUILDNUMBER"
-    connectionString           = "$env:CRM_CONNECTION"
+    newBranchName              = "$newBranchName"
+    connectionString           = "$connectionString"
     connectionTimeoutInMinutes = "20"
     solutionName               = "PRTestSln"
     unpackFolder               = "Solution"

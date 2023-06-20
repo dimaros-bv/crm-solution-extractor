@@ -9,6 +9,12 @@ pool:
 variables: 
   extensionVersion: 1.0.8
 
+resources:
+  repositories:
+  - repository: TestRepo
+    type: git
+    name: Dimaros/Dimaros.CRM.SolutionExtractor.Test
+
 stages:
 - stage: 'Build'
   displayName: 'Build'
@@ -16,6 +22,7 @@ stages:
   - job: Build
     displayName: "Build"
     steps:
+      - checkout: self
       - task: TfxInstaller@4
         displayName: 'Use Node CLI for Azure DevOps'
         inputs:
@@ -43,12 +50,20 @@ stages:
   jobs:
   - job: IntegrationTest
     displayName: "Integration Test"
+    variables:
+      testScriptPath: "solutionExtractor/tests/ExtractSolutionAndCreatePR.IntegrationTest.ps1"
     steps:
+    - checkout: self
+    - checkout: TestRepo
     - task: PowerShell@2
       inputs:
-        filePath: "$(Build.SourcesDirectory)/solutionExtractor/tests/ExtractSolutionAndCreatePR.IntegrationTest.ps1"
+        filePath: "$(Build.SourcesDirectory)/crm-solution-extractor/$(testScriptPath)"
+        arguments: >
+          -repositoryRoot "$(Build.SourcesDirectory)/TestRepo"
+          -newBranchName "solution-extract-$(Build.BuildNumber)"
+          -connectionString $(crmConnection)
       env:
-        CRM_CONNECTION: $(crmConnection)
+        System_AccessToken: $(System.AccessToken)
   - job: waitForValidation  
     displayName: "Wait for validation"
     pool: server
@@ -59,7 +74,7 @@ stages:
       inputs:
         notifyUsers: "D365SolutionExtractor-Support@dimaros.nl"
         instructions: |
-          - Check if PR is created.
+          - Check if PR is created in AzureDevOps Dimaros.CRM.SolutionExtractor.Test repository.
 
 - stage: Publish
   displayName: 'Publish to Marketplace'
