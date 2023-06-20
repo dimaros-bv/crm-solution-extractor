@@ -4,7 +4,7 @@ param (
   [string]$connectionString
 )
 
-
+# Mock Azure task specific functions
 function Get-VstsInput {
   [CmdletBinding()]
   param (
@@ -34,6 +34,9 @@ function Get-VstsInput {
     throw "Mock input '$Name' not found."
   }
 }
+
+function Trace-VstsEnteringInvocation { }
+function Trace-VstsLeavingInvocation { }
 
 . "$PSScriptRoot\..\functions\ExtractSolutionAndCreatePR.ps1"
 
