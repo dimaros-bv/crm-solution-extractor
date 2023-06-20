@@ -59,7 +59,7 @@ stages:
       inputs:
         filePath: "$(Build.SourcesDirectory)/crm-solution-extractor/$(testScriptPath)"
         arguments: >
-          -repositoryRoot "$(Build.SourcesDirectory)/TestRepo"
+          -repositoryRoot "$(Build.SourcesDirectory)/Dimaros.CRM.SolutionExtractor.Test"
           -newBranchName "solution-extract-$(Build.BuildNumber)"
           -connectionString $(crmConnection)
       env:
