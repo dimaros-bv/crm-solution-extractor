@@ -61,7 +61,7 @@ stages:
         arguments: >
           -repositoryRoot "$(Build.SourcesDirectory)/Dimaros.CRM.SolutionExtractor.Test"
           -newBranchName "solution-extract-$(Build.BuildNumber)"
-          -connectionString $(crmConnection)
+          -connectionString "$(crmConnection)"
       env:
         System_AccessToken: $(System.AccessToken)
   - job: waitForValidation  
