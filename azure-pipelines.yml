@@ -1,10 +1,13 @@
-name: "1.0$(Rev:.r)$(Build.SourceBranch -eq 'refs/heads/main' ? '' : '-' + Build.SourceBranchName)"
+name: "1.0$(Rev:.r)-$(Build.SourceBranchName)"
 
 trigger:
 - main
 
 pool:
   vmImage: 'windows-latest'
+
+variables: 
+  extensionVersion: $((Build.BuildNumber -split "-", 2)[0])
 
 stages:
 - stage: 'Build'
@@ -26,7 +29,7 @@ stages:
           outputPath: '$(Build.ArtifactStagingDirectory)'
           updateTasksVersion: true
           extensionPricing: 'free'
-          extensionVersion: '$(Build.BuildNumber)'
+          extensionVersion: '$(extensionVersion)'
 
       - task: PublishPipelineArtifact@1
         displayName: 'Publish vsix'
@@ -89,8 +92,8 @@ stages:
               action: 'create'
               target: '$(Build.SourceVersion)'
               tagSource: 'userSpecifiedTag'
-              tag: 'v$(Build.BuildNumber)'
-              title: 'v$(Build.BuildNumber)'
+              tag: 'v$(extensionVersion)'
+              title: 'v$(extensionVersion)'
               releaseNotesSource: 'inline'
               assets: '$(publishProd.Extension.OutputPath)*'
               changeLogCompareToRelease: 'lastFullRelease'
