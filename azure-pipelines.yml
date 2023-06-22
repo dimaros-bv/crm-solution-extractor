@@ -68,7 +68,11 @@ stages:
         vsixFile: '$(Pipeline.Workspace)/vsix/*.vsix'
         extensionId: 'd365-solution-extractor-dev'
         extensionName: 'D365 Solution Extractor Dev'
+        extensionVersion: '$(extensionVersion)'
 
+- stage: Test
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
   - job: waitForValidation  
     displayName: "Wait for validation"
     pool: server
