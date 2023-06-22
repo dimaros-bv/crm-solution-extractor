@@ -47,6 +47,11 @@ stages:
   - job: Publish
     displayName: "Publish to Marketplace"
     steps:
+    - checkout: none
+    
+    - download: current
+      artifact: vsix
+
     - task: TfxInstaller@4
       displayName: 'Use Node CLI for Azure DevOps'
       inputs:
