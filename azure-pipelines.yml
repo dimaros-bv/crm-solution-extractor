@@ -1,4 +1,4 @@
-name: "1.0.9-$(Date:yyyyMMdd).$(Rev:r)-$(Build.SourceBranchName)"
+name: "1.0.10-$(Date:yyyyMMdd).$(Rev:r)-$(Build.SourceBranchName)"
 
 trigger:
 - main
@@ -7,7 +7,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables: 
-  extensionVersion: 1.0.9
+  extensionVersion: 1.0.10
 
 stages:
 - stage: 'Build'
