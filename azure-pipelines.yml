@@ -76,7 +76,6 @@ stages:
   - job: waitForValidation  
     displayName: "Wait for validation"
     pool: server
-    dependsOn: 'Publish'
     timeoutInMinutes: "1440" # job times out in 24 hours
     steps:
     - task: ManualValidation@0
