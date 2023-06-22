@@ -54,13 +54,14 @@ stages:
         checkLatest: true
 
     - task: PublishAzureDevOpsExtension@4
-      name: 'Publish extension'
+      name: 'PublishExtension'
+      displayName: 'Publish extension'
       inputs:
         connectTo: 'VsTeam'
         connectedServiceName: 'Visual Studio Marketplace Service Connection'
         fileType: 'vsix'
         vsixFile: '$(Pipeline.Workspace)/vsix/*.vsix'
-        extensionId: 'd365-solution-extractor'
+        extensionId: 'd365-solution-extractor-dev'
         extensionName: 'D365 Solution Extractor Dev'
 
   - job: waitForValidation  
