@@ -9,12 +9,6 @@ pool:
 variables: 
   extensionVersion: 1.0.8
 
-resources:
-  repositories:
-  - repository: TestRepo
-    type: git
-    name: Dimaros/Dimaros.CRM.SolutionExtractor.Test
-
 stages:
 - stage: 'Build'
   displayName: 'Build'
@@ -46,28 +40,33 @@ stages:
           artifact: 'vsix'
         condition: succeededOrFailed()
 
-- stage: 'Test'
+- stage: PublishDev
+  displayName: 'Publish Dev'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
-  - job: IntegrationTest
-    displayName: "Integration Test"
-    variables:
-      testScriptPath: "solutionExtractor/tests/ExtractSolutionAndCreatePR.IntegrationTest.ps1"
+  - job: Publish
+    displayName: "Publish to Marketplace"
     steps:
-    - checkout: self
-    - checkout: TestRepo
-    - task: PowerShell@2
+    - task: TfxInstaller@4
+      displayName: 'Use Node CLI for Azure DevOps'
       inputs:
-        filePath: "$(Build.SourcesDirectory)/crm-solution-extractor/$(testScriptPath)"
-        arguments: >
-          -repositoryRoot "$(Build.SourcesDirectory)/Dimaros.CRM.SolutionExtractor.Test"
-          -newBranchName "solution-extract-$(Build.BuildNumber)"
-          -connectionString "$(crmConnection)"
-      env:
-        System_AccessToken: $(System.AccessToken)
+        version: '0.x'
+        checkLatest: true
+
+    - task: PublishAzureDevOpsExtension@4
+      name: 'Publish extension'
+      inputs:
+        connectTo: 'VsTeam'
+        connectedServiceName: 'Visual Studio Marketplace Service Connection'
+        fileType: 'vsix'
+        vsixFile: '$(Pipeline.Workspace)/vsix/*.vsix'
+        extensionId: 'd365-solution-extractor'
+        extensionName: 'D365 Solution Extractor Dev'
+
   - job: waitForValidation  
     displayName: "Wait for validation"
     pool: server
-    dependsOn: 'IntegrationTest'
+    dependsOn: 'Publish'
     timeoutInMinutes: "1440" # job times out in 24 hours
     steps:
     - task: ManualValidation@0
@@ -76,8 +75,8 @@ stages:
         instructions: |
           - Check if PR is created in AzureDevOps Dimaros.CRM.SolutionExtractor.Test repository.
 
-- stage: Publish
-  displayName: 'Publish to Marketplace'
+- stage: PublishProd
+  displayName: 'Publish Prod'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   jobs:
   - deployment: SolutionExtractorDeployment
