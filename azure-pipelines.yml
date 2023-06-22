@@ -69,6 +69,7 @@ stages:
         extensionId: 'd365-solution-extractor-dev'
         extensionName: 'D365 Solution Extractor Dev'
         extensionVersion: '$(extensionVersion)'
+        updateTasksId: true
 
 - stage: Test
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
