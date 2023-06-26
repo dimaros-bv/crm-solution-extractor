@@ -1,13 +1,10 @@
-name: "1.0.10-$(Date:yyyyMMdd).$(Rev:r)-$(Build.SourceBranchName)"
+name: '1.0$(Rev:.r)'
 
 trigger:
 - main
 
 pool:
   vmImage: 'windows-latest'
-
-variables: 
-  extensionVersion: 1.0.10
 
 stages:
 - stage: 'Build'
@@ -30,7 +27,7 @@ stages:
           outputPath: '$(Build.ArtifactStagingDirectory)'
           updateTasksVersion: true
           extensionPricing: 'free'
-          extensionVersion: '$(extensionVersion)'
+          extensionVersion: '$(Build.BuildNumber)'
 
       - task: PublishPipelineArtifact@1
         displayName: 'Publish vsix'
@@ -68,7 +65,7 @@ stages:
         vsixFile: '$(Pipeline.Workspace)/vsix/*.vsix'
         extensionId: 'd365-solution-extractor-dev'
         extensionName: 'D365 Solution Extractor Dev'
-        extensionVersion: '$(extensionVersion)'
+        extensionVersion: '$(Build.BuildNumber)'
         updateTasksId: true
 
 - stage: Test
@@ -116,8 +113,8 @@ stages:
               action: 'create'
               target: '$(Build.SourceVersion)'
               tagSource: 'userSpecifiedTag'
-              tag: 'v$(extensionVersion)'
-              title: 'v$(extensionVersion)'
+              tag: 'v$(Build.BuildNumber)'
+              title: 'v$(Build.BuildNumber)'
               releaseNotesSource: 'inline'
               assets: '$(publishProd.Extension.OutputPath)*'
               changeLogCompareToRelease: 'lastFullRelease'
