@@ -13,6 +13,7 @@ stages:
   - job: Build
     displayName: "Build"
     steps:
+      - checkout: self
       - task: TfxInstaller@4
         displayName: 'Use Node CLI for Azure DevOps'
         inputs:
@@ -35,11 +36,55 @@ stages:
           targetPath: '$(packageStep.Extension.OutputPath)'
           artifact: 'vsix'
         condition: succeededOrFailed()
-      
-- stage: Publish
-  displayName: 'Publish to Marketplace'
+
+- stage: PublishDev
+  displayName: 'Publish Dev'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - job: Publish
+    displayName: "Publish to Marketplace"
+    steps:
+    - checkout: none
+    
+    - download: current
+      artifact: vsix
+
+    - task: TfxInstaller@4
+      displayName: 'Use Node CLI for Azure DevOps'
+      inputs:
+        version: '0.x'
+        checkLatest: true
+
+    - task: PublishAzureDevOpsExtension@4
+      name: 'PublishExtension'
+      displayName: 'Publish extension'
+      inputs:
+        connectTo: 'VsTeam'
+        connectedServiceName: 'Visual Studio Marketplace Service Connection'
+        fileType: 'vsix'
+        vsixFile: '$(Pipeline.Workspace)/vsix/*.vsix'
+        extensionId: 'd365-solution-extractor-dev'
+        extensionName: 'D365 Solution Extractor Dev'
+        extensionVersion: '$(Build.BuildNumber)'
+        updateTasksId: true
+
+- stage: Test
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - job: waitForValidation  
+    displayName: "Wait for validation"
+    pool: server
+    timeoutInMinutes: "1440" # job times out in 24 hours
+    steps:
+    - task: ManualValidation@0
+      inputs:
+        notifyUsers: "D365SolutionExtractor-Support@dimaros.nl"
+        instructions: |
+          - Check if PR is created in AzureDevOps Dimaros.CRM.SolutionExtractor.Test repository.
+
+- stage: PublishProd
+  displayName: 'Publish Prod'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-  dependsOn: 'Build'
   jobs:
   - deployment: SolutionExtractorDeployment
     environment: solution-extractor
