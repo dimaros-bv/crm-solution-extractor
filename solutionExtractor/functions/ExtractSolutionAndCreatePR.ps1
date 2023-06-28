@@ -67,9 +67,12 @@ function ExtractSolutionAndCreatePR {
 
 
     # Connect to CRM
-    Log 'Getting crm connection'
+    Log 'Setting connection timeout'
     $crmTimeout = New-TimeSpan -Minutes $connectionTimeoutInMinutes
-    $conn = Get-CrmConnection -ConnectionString $connectionString -MaxCrmConnectionTimeOutMinutes $crmTimeout.TotalMinutes
+    # SilentlyContinue on Warning (required CRM reconnection after setting timeout), because it is not the case here.
+    Set-CrmConnectionTimeout -TimeoutInSeconds $crmTimeout.TotalSeconds -WarningAction SilentlyContinue
+    Log 'Getting crm connection'
+    $conn = Get-CrmConnection -ConnectionString $connectionString
     Log "IsReady: $($conn.IsReady)"
     Log "CrmConnectOrgUriActual: $($conn.CrmConnectOrgUriActual)"
     Log "ConnectedOrgFriendlyName: $($conn.ConnectedOrgFriendlyName)"
