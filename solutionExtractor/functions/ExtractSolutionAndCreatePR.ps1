@@ -23,6 +23,7 @@ function ExtractSolutionAndCreatePR {
     $gitName = Get-VstsInput -Name 'gitName'
     $targetBranchName = Get-VstsInput -Name 'targetBranchName'
     $newBranchName = Get-VstsInput -Name 'newBranchName'
+    $prDescription = Get-VstsInput -Name 'prDescription'
     $connectionString = Get-VstsInput -Name 'connectionString'
     $connectionTimeoutInMinutes = Get-VstsInput -Name 'connectionTimeoutInMinutes'
     $solutionName = Get-VstsInput -Name 'solutionName'
@@ -34,6 +35,7 @@ function ExtractSolutionAndCreatePR {
     Log "gitName: $gitName"
     Log "targetBranchName: $targetBranchName"
     Log "newBranchName: $newBranchName"
+    Log "prDescription: $prDescription"
     Log "connectionString: ***"
     Log "connectionTimeoutInMinutes: $connectionTimeoutInMinutes"
     Log "solutionName: $solutionName"
@@ -121,6 +123,7 @@ function ExtractSolutionAndCreatePR {
         CreatePullRequestRoot `
             -sourceBranch $newBranchName `
             -targetBranch $targetBranchName `
+            -description $prDescription `
             -title "$solutionName solution extract"
     }
         

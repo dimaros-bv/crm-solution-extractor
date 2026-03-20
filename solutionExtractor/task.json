@@ -55,6 +55,14 @@
             "helpMarkDown": "Branch name to create a PR from."
         },
         {
+           "name": "prDescription",
+            "type": "string",
+            "label": "PR Description",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "PR Description to be used for the created Pull Request."
+        },
+        {
             "name": "connectionString",
             "type": "string",
             "label": "Dataverse connection string",
